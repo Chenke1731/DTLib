@@ -18,28 +18,6 @@ protected:
     // 树形结构的遍历采用队列实现
     LinkQueue<GTreeNode<T>*> m_queue;
 
-/*     GTreeNode<T> *find(GTreeNode<T> *node, const T &value) const
-    {
-        GTreeNode<T> *ret = NULL;
-        if (node != NULL)
-        {
-            if (node->value == value)
-                return node;
-            else
-            {
-                for (node->child.move(0); !node->child.end() && ret == NULL; node->child.next())
-                {
-                    ret = find(node->child.current, value);
-                }
-            }
-        }
-        else
-        {
-            THROW_EXCEPTION(InvalidParameteException, "Parament node is invalid... ");
-        }
-        return ret;
-    } */
-
     GTreeNode<T> * find(GTreeNode<T>* node, const T& value)const
     {
         GTreeNode<T>* ret = NULL;

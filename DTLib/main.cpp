@@ -23,7 +23,7 @@
 #include <windows.h>
 #include "Tree.h"
 #include "GTree.h"
-
+#include "BTree.h"
 
 using namespace std;
 using namespace DTLib;
@@ -85,6 +85,9 @@ int main()
     {
         cout << t.current()<<endl;
     }
+
+    BTree<int> bt;
+    BTreeNode<int> btn;
 	
 	return 0;
 }

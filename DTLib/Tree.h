@@ -7,15 +7,18 @@
 namespace DTLib
 {
 
-
 template<typename T>
 class Tree : public Object
 {
 protected:
-  TreeNode<T> *m_root;
+    TreeNode<T> *m_root;
+
+    // 避免两棵树之间的复制
+    Tree(const Tree<T>&);
+    Tree<T>& operator = (const Tree<T>&);
 
 public:
-	  Tree() { m_root = NULL; }
+    Tree() { m_root = NULL; }
     virtual bool insert(TreeNode<T> *node) = 0;
     virtual bool insert(const T &value, TreeNode<T> *parent) = 0;
     virtual SharedPointer<Tree<T>> remove(const T &value) = 0;
