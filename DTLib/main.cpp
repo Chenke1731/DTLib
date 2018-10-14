@@ -68,7 +68,7 @@ int main()
 	node = t.find('H');
 	t.insert('M', node);
 
-	t.clear();
+    t.remove('D');
 	
 	for (int i = 0; i < 7; i++)
 	{
