@@ -70,17 +70,21 @@ int main()
 
     t.remove('D');
 	
-	for (int i = 0; i < 7; i++)
-	{
-		TreeNode<char>* node = t.find(s[i]);	// 找出叶节点， 可以用子类型对父类类型指针进行复赋值
-		// 将叶节点当成链表的起始结点开始遍历
-		while (node != NULL)
-		{
-			cout << node->value << " ";
-			node = node->parent;
-		}
-		cout << endl;
-	}
+//	for (int i = 0; i < 7; i++)
+//	{
+//		TreeNode<char>* node = t.find(s[i]);	// 找出叶节点， 可以用子类型对父类类型指针进行复赋值
+//		// 将叶节点当成链表的起始结点开始遍历
+//		while (node != NULL)
+//		{
+//			cout << node->value << " ";
+//			node = node->parent;
+//		}
+//		cout << endl;
+//	}
+    for(t.begin(); !t.end(); t.next())
+    {
+        cout << t.current()<<endl;
+    }
 	
 	return 0;
 }
