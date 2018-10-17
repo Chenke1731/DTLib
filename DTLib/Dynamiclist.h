@@ -1,45 +1,44 @@
 ﻿#ifndef DYNAMICLIST_H
 #define DYNAMICLIST_H
 
-#include "SeqList.h"
 #include "Exception.h"
+#include "SeqList.h"
 
 namespace DTLib
 {
-
 template <typename T>
 class DynamicList : public SeqList<T>
 {
-  protected:
-    int m_capacity; // 顺序存储空间的大小
+protected:
+    int m_capacity;    // 顺序存储空间的大小
 
-  public:
-    DynamicList(int capacity) // 申请空间，构造函数参数作为大小
+public:
+    DynamicList (int capacity)    // 申请空间，构造函数参数作为大小
     {
         this->m_array = new T[capacity];
 
         if (this->m_array != NULL)
-        { // 堆空间申请成功
-            this->m_length = 0;
+        {    // 堆空间申请成功
+            this->m_length   = 0;
             this->m_capacity = capacity;
         }
         else
-        { // 抛异常
-            THROW_EXCEPTION(NoEnoughMemoryException, "No memory to creat DynamicList object...");
+        {    // 抛异常
+            THROW_EXCEPTION (NoEnoughMemoryException, "No memory to creat DynamicList object...");
         }
     }
 
-    int capacity() const
+    int capacity () const
     {
         return this->m_capacity;
     }
 
     // 动态特性体现
     // 重新设置顺序存储空间的大小
-    void resizes(int capacity)
+    void resizes (int capacity)
     {
         if (capacity != m_capacity)
-        { // 保证异常安全性
+        {    // 保证异常安全性
             T *array = new T[capacity];
             if (array != NULL)
             {
@@ -52,26 +51,24 @@ class DynamicList : public SeqList<T>
 
                 // 移动m_array指向新的堆空间，销毁m_array指向的原来的堆空间
                 // 注意异常安全性
-                T *temp = this->m_array;
-                this->m_array = array;
-                this->m_length = length;
+                T *temp          = this->m_array;
+                this->m_array    = array;
+                this->m_length   = length;
                 this->m_capacity = capacity;
                 delete[] temp;
             }
             else
             {
-                THROW_EXCEPTION(NoEnoughMemoryException, "No memory to resize DynamicList object...");
+                THROW_EXCEPTION (NoEnoughMemoryException, "No memory to resize DynamicList object...");
             }
         }
     }
-    ~DynamicList()
+    ~DynamicList ()
     {
         delete[] this->m_array;
     }
 };
 
-} // namespace DTLib
+}    // namespace DTLib
 
-#endif // !DYNAMICLIST_H
-
-
+#endif    // !DYNAMICLIST_H

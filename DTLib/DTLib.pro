@@ -40,4 +40,4 @@ HEADERS += \
     CircleList.h \
     Array.h \
     BTree.h \
-    BTreenode.h
+    BTreeNode.h

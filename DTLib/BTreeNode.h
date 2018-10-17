@@ -5,8 +5,6 @@
 
 namespace DTLib
 {
-
-
 template <typename T>
 class BTreeNode : public TreeNode<T>
 {
@@ -14,26 +12,24 @@ public:
     BTreeNode<T>* left;
     BTreeNode<T>* right;
 
-    BTreeNode()
+    BTreeNode ()
     {
-        left = NULL;
+        left  = NULL;
         right = NULL;
     }
 
     // 工厂方法
-    static BTreeNode<T> *NewNode()
+    static BTreeNode<T>* NewNode ()
     {
-        BTreeNode<T> *ret = new BTreeNode<T>();
+        BTreeNode<T>* ret = new BTreeNode<T> ();
         if (ret != NULL)
         {
-            ret->m_flag = true; // 创建成功，进行标记
+            ret->m_flag = true;    // 创建成功，进行标记
         }
         return ret;
     }
 };
 
+}    // namespace DTLib
 
-}
-
-
-#endif // BTREENODE_H
+#endif    // BTREENODE_H
