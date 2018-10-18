@@ -1,9 +1,7 @@
 ﻿#include <windows.h>
-
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
-
 #include "BTree.h"
 #include "CircleList.h"
 #include "DTString.h"
@@ -30,66 +28,40 @@
 using namespace std;
 using namespace DTLib;
 
-int main ()
+int main()
 {
-    GTree<char>      t;
-    GTreeNode<char>* node = NULL;
-    GTreeNode<char>  root;    // 这个结点是在栈上定义的
-    // 调用clear()函数之后，会有一步delete
-    // node，这个时候就会发生delete栈中的局部变量root了
-    // 只有堆中的对象需要delete，栈中变量是不能直接被管理的
-    // 所以需要处理delete栈中变量的问题
-    root.value  = 'A';
-    root.parent = NULL;
+    BTree<int>      bt;
+    BTreeNode<int>* n = nullptr;
+    bt.insert(1);
+    n = bt.find(1);
+    bt.insert(2, n);
+    bt.insert(3, n);
+    n = bt.find(2);
+    bt.insert(4, n);
+    bt.insert(5, n);
+    n = bt.find(4);
+    bt.insert(8, n);
+    bt.insert(9, n);
+    n = bt.find(5);
+    bt.insert(10, n);
+    n = bt.find(3);
+    bt.insert(6, n);
+    bt.insert(7, n);
 
-    const char* s = "KLFGMIJ";
-    t.insert (&root);
+    int a[] = {8, 9, 10, 6, 7};
 
-    // t.insert('A', NULL);
-    node = t.find ('A');
-    t.insert ('B', node);
-    t.insert ('C', node);
-    t.insert ('D', node);
+    SharedPointer<Tree<int>> sp = bt.remove(3);
 
-    node = t.find ('B');
-    t.insert ('E', node);
-    t.insert ('F', node);
-
-    node = t.find ('E');
-    t.insert ('K', node);
-    t.insert ('L', node);
-
-    node = t.find ('C');
-    t.insert ('G', node);
-
-    node = t.find ('D');
-    t.insert ('H', node);
-    t.insert ('I', node);
-    t.insert ('J', node);
-
-    node = t.find ('H');
-    t.insert ('M', node);
-
-    t.remove ('D');
-
-    for (int i = 0; i < 7; i++)
+    for (int i = 0; i < 5; i++)
     {
-        TreeNode<char>* node = t.find (s[i]);    // 找出叶节点，可以用子类型对父类类型指针进行复赋值
-        // 将叶节点当成链表的起始结点开始遍历
-        while (node != NULL)
+        TreeNode<int>* node = bt.find(a[i]);
+        while (node)
         {
-            cout << node->value << " ";
+            //cout << node->value << " ";
             node = node->parent;
         }
-        cout << endl;
+        //cout << endl;
     }
-    for (t.begin (); !t.end (); t.next ())
-    {
-        cout << t.current () << endl;
-    }
-
-    BTree<int>     bt;
-    BTreeNode<int> btn;
 
     return 0;
 }

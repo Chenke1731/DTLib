@@ -1,45 +1,45 @@
 ﻿#ifndef POINTER_H
 #define POINTER_H
 
-#include "Object.h"
 #include <cstdlib>
+
+#include "Object.h"
 
 namespace DTLib
 {
-
 template <typename T>
 class Pointer
 {
-  protected:
-    T *m_pointer;
+protected:
+    T* m_pointer;
 
-  public:
-    Pointer(T *p = NULL)
+public:
+    Pointer (T* p = NULL)
     {
         m_pointer = p;
     }
 
-    T *operator->()
+    T* operator-> ()
     {
         return m_pointer;
     }
 
-    T &operator*()
+    T& operator* ()
     {
         return *m_pointer;
     }
 
-    bool isNull()
+    bool isNull ()
     {
         return (m_pointer == NULL);
     }
 
-    T *get() const
+    T* get () const
     {
         return m_pointer;
     }
 };
 
-} // namespace DTLib
+}    // namespace DTLib
 
-#endif // !POINTER_H
+#endif    // !POINTER_H
