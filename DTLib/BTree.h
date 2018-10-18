@@ -2,9 +2,12 @@
 #define BTREE_H
 
 #include "BTreeNode.h"
+#include "DynamicArray.h"
 #include "Exception.h"
 #include "LinkQueue.h"
+#include "SharedPointer.h"
 #include "Tree.h"
+
 namespace DTLib
 {
 enum BTNodePos
@@ -14,10 +17,19 @@ enum BTNodePos
     RIGHT
 };
 
+enum BTTraversal
+{
+    PreOrder,
+    InOrder,
+    PostOrder
+};
+
 template <typename T>
 class BTree : public Tree<T>
 {
 protected:
+    LinkQueue<BTreeNode<T>*> m_queue;
+
     BTreeNode<T>* find(BTreeNode<T>* node, const T& value) const    // 是否要加虚函数
     {
         BTreeNode<T>* ret = NULL;
@@ -172,6 +184,36 @@ protected:
         return ret;
     }
 
+    void preOrderTraversal(BTreeNode<T>* node, LinkQueue<BTreeNode<T>*>& queue)
+    {
+        if (node != NULL)
+        {
+            queue.add(node);
+            preOrderTraversal(node->left, queue);
+            preOrderTraversal(node->right, queue);
+        }
+    }
+
+    void inOrderTraversal(BTreeNode<T>* node, LinkQueue<BTreeNode<T>*>& queue)
+    {
+        if (node != NULL)
+        {
+            inOrderTraversal(node->left, queue);
+            queue.add(node);
+            inOrderTraversal(node->right, queue);
+        }
+    }
+
+    void postOrderTraversal(BTreeNode<T>* node, LinkQueue<BTreeNode<T>*>& queue)
+    {
+        if (node != NULL)
+        {
+            postOrderTraversal(node->left, queue);
+            postOrderTraversal(node->right, queue);
+            queue.add(node);
+        }
+    }
+
 public:
     bool insert(TreeNode<T>* node)
     {
@@ -244,6 +286,7 @@ public:
         if (node != NULL)
         {
             remove(node, ret);
+            m_queue.clear();
         }
         else
         {
@@ -262,6 +305,7 @@ public:
         if (node != NULL)
         {
             remove(dynamic_cast<BTreeNode<T>*>(node), ret);
+            m_queue.clear();
         }
         else
         {
@@ -301,10 +345,95 @@ public:
         return height(root());
     }
 
+    // 遍历操作成员函数
+    bool begin()    // 做队列的初始化工作
+    {
+        bool ret = (root() != NULL);    // 判断当前结点是否为空
+        if (ret)
+        {
+            // 将根节点压入队中
+            m_queue.clear();
+            m_queue.add(root());
+        }
+
+        return ret;
+    }
+
+    bool end()
+    {
+        return (m_queue.length() == 0);
+    }
+
+    bool next()
+    {
+        // 判断队列中是否还有元素
+        bool ret = (m_queue.length() > 0);
+        if (ret)
+        {
+            // 出队操作
+            BTreeNode<T>* node = m_queue.front();    // 取出保存队头，方便对头的结点的孩子入队
+            m_queue.remove();                        // 将对头出队，移动一次游标
+
+            if (node->left != NULL)
+                m_queue.add(node->left);
+            if (node->right != NULL)
+                m_queue.add(node->right);
+        }
+        return ret;
+    }
+
+    // 返回头结点的元素值
+    T current()
+    {
+        // 判断遍历是否结束
+        // 只有在遍历的过程中，才有意义
+        if (!end())
+        {
+            return m_queue.front()->value;    // 队头即游标指向的元素值
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidOperationException, "No value at current position...");
+        }
+    }
+
+    SharedPointer<Array<T>> tranversal(BTTraversal order)
+    {
+        DynamicArray<T>*         ret = NULL;
+        LinkQueue<BTreeNode<T>*> queue;    // 保存遍历结点的次序
+        switch (order)
+        {
+            case PreOrder:
+                preOrderTraversal(root(), queue);
+                break;
+            case InOrder:
+                inOrderTraversal(root(), queue);
+                break;
+            case PostOrder:
+                postOrderTraversal(root(), queue);
+                break;
+            default:
+                THROW_EXCEPTION(InvalidOperationException, "");
+        }
+        ret = new DynamicArray<T>(queue.length());
+        if (ret)
+        {
+            for (int i = 0; i < ret->length(); i++, queue.remove())
+            {
+                ret->set(i, queue.front()->value);
+            }
+        }
+        else
+        {
+            THROW_EXCEPTION(NoEnoughMemoryException, "No enough memory to creat DynamicArray queue");
+        }
+    }
+
     void clear()
     {
         free(root());
         this->m_root = NULL;
+        m_queue.clear();
     }
 
     ~BTree()

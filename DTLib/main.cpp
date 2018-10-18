@@ -48,19 +48,29 @@ int main()
     bt.insert(6, n);
     bt.insert(7, n);
 
-    int a[] = {8, 9, 10, 6, 7};
+    // int a[] = {8, 9, 10, 6, 7};
 
     SharedPointer<Tree<int>> sp = bt.remove(3);
 
-    for (int i = 0; i < 5; i++)
+    //    for (int i = 0; i < 5; i++)
+    //    {
+    //        TreeNode<int>* node = bt.find(a[i]);
+    //        while (node)
+    //        {
+    //            //cout << node->value << " ";
+    //            node = node->parent;
+    //        }
+    //        //cout << endl;
+    //    }
+    for (bt.begin(); !bt.end(); bt.next())
     {
-        TreeNode<int>* node = bt.find(a[i]);
-        while (node)
-        {
-            //cout << node->value << " ";
-            node = node->parent;
-        }
-        //cout << endl;
+        cout << bt.current() << endl;
+    }
+
+    SharedPointer<Array<int>> sp1 = bt.tranversal(PreOrder);
+    for (int i = 0; i < sp1->length(); i++)
+    {
+        // cout << sp1[i] << endl;
     }
 
     return 0;
