@@ -25,6 +25,7 @@
 #include "StaticStack.h"
 #include "Tree.h"
 
+
 using namespace std;
 using namespace DTLib;
 
@@ -50,7 +51,7 @@ int main()
 
     // int a[] = {8, 9, 10, 6, 7};
 
-    SharedPointer<Tree<int>> sp = bt.remove(3);
+    // SharedPointer<Tree<int>> sp = bt.remove(3);
 
     //    for (int i = 0; i < 5; i++)
     //    {
@@ -62,16 +63,17 @@ int main()
     //        }
     //        //cout << endl;
     //    }
-    for (bt.begin(); !bt.end(); bt.next())
-    {
-        cout << bt.current() << endl;
-    }
+    //    for (bt.begin(); !bt.end(); bt.next())
+    //    {
+    //        cout << bt.current() << endl;
+    //    }
 
     SharedPointer<Array<int>> sp1 = bt.tranversal(PreOrder);
-    for (int i = 0; i < sp1->length(); i++)
+    for (int i = 0; i < (*sp1).length(); i++)
     {
-        // cout << sp1[i] << endl;
+        cout << (*sp1)[i] << " ";
     }
 
+    cout << endl;
     return 0;
 }

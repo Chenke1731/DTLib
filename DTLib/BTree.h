@@ -1,4 +1,4 @@
-#ifndef BTREE_H
+﻿#ifndef BTREE_H
 #define BTREE_H
 
 #include "BTreeNode.h"
@@ -414,9 +414,10 @@ public:
                 break;
             default:
                 THROW_EXCEPTION(InvalidOperationException, "");
+                break;
         }
         ret = new DynamicArray<T>(queue.length());
-        if (ret)
+        if (ret != NULL)
         {
             for (int i = 0; i < ret->length(); i++, queue.remove())
             {
@@ -427,6 +428,7 @@ public:
         {
             THROW_EXCEPTION(NoEnoughMemoryException, "No enough memory to creat DynamicArray queue");
         }
+		return ret;
     }
 
     void clear()
