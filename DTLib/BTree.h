@@ -214,6 +214,75 @@ protected:
         }
     }
 
+    BTreeNode<T>* clone(BTreeNode<T>* node) const
+    {
+        BTreeNode<T>* ret = NULL;
+
+        if (node != NULL)
+        {
+            // 在堆空间上创建新节点
+            ret = BTreeNode<T>::NewNode();
+            if (ret != NULL)
+            {
+                ret->value = node->value;
+                ret->left  = clone(node->left);
+                ret->right = clone(node->right);
+                // 建立父子关系
+                if (ret->left != NULL)
+                    ret->left->parent = ret;
+                if (ret->right != NULL)
+                    ret->right->parent = ret;
+            }
+            else
+            {
+                THROW_EXCEPTION(NoEnoughMemoryException, "No enough memory to creat a new BTreeNode...");
+            }
+        }
+
+        return ret;
+    }
+
+    bool equal(BTreeNode<T>* lh, BTreeNode<T>* rh) const
+    {
+        if (lh == rh)
+            return true;
+        else if ((lh != NULL) && (rh != NULL))
+            return ((lh->value == rh->value) && (equal(lh->left, rh->left)) && (equal(lh->right, rh->right)));
+        else    // 一棵空，一棵非空
+            return false;
+    }
+
+    BTreeNode<T>* add(BTreeNode<T>* lh, BTreeNode<T>* rh) const
+    {
+        BTreeNode<T>* ret = NULL;
+
+        if ((lh == NULL) && (rh != NULL))
+            ret = clone(rh);
+        else if ((lh != NULL) && (rh == NULL))
+            ret = clone(lh);
+        else if ((lh != NULL) && (rh != NULL))
+        {
+            ret = BTreeNode<T>::NewNode();
+            if (ret != NULL)
+            {
+                ret->value = lh->value + rh->value;
+                ret->left  = add(lh->left, rh->left);
+                ret->right = add(lh->right, rh->right);
+                //建立父子关系
+                if (ret->left != NULL)
+                    ret->left->parent = ret;
+                if (ret->right != NULL)
+                    ret->right->parent = ret;
+            }
+            else
+            {
+                THROW_EXCEPTION(NoEnoughMemoryException, "No enough memory to create a new BTreeNode...");
+            }
+        }
+
+        return ret;
+    }
+
 public:
     bool insert(TreeNode<T>* node)
     {
@@ -428,7 +497,7 @@ public:
         {
             THROW_EXCEPTION(NoEnoughMemoryException, "No enough memory to creat DynamicArray queue");
         }
-		return ret;
+        return ret;
     }
 
     void clear()
@@ -436,6 +505,47 @@ public:
         free(root());
         this->m_root = NULL;
         m_queue.clear();
+    }
+
+    // 克隆树
+    SharedPointer<BTree<T>> clone() const
+    {
+        BTree<T>* ret = new BTree<T>();
+        if (ret != NULL)
+        {
+            ret->m_root = clone(root());
+        }
+        else
+        {
+            THROW_EXCEPTION(NoEnoughMemoryException, "No enough memory to creat new BTree...");
+        }
+
+        return ret;
+    }
+
+    // 相等比较操作符重载
+    bool operator==(const BTree<T>& btree)
+    {
+        return equal(root(), btree.root());
+    }
+    bool operator!=(const BTree<T>& btree)
+    {
+        return !(*this == btree);
+    }
+
+    // 二叉树相加操作
+    SharedPointer<BTree<T>> add(const BTree<T>& btree) const
+    {
+        BTree<T>* ret = new BTree<T>();
+        if (ret != NULL)
+        {
+            ret->m_root = add(root(), btree.root());
+        }
+        else
+        {
+            THROW_EXCEPTION(NoEnoughMemoryException, "No enough memory to create a new BTree...");
+        }
+        return ret;
     }
 
     ~BTree()
