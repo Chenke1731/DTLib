@@ -21,7 +21,8 @@ enum BTTraversal
 {
     PreOrder,
     InOrder,
-    PostOrder
+    PostOrder,
+    LevelOrder
 };
 
 template <typename T>
@@ -214,6 +215,26 @@ protected:
         }
     }
 
+    void levelOrderTraversal(BTreeNode<T>* node, LinkQueue<BTreeNode<T>*>& queue)
+    {
+        if (node != NULL)
+        {
+            LinkQueue<BTreeNode<T>*> tmp;
+            tmp.add(node);    // 没有采用递归，node 即是 root()
+            while (tmp.length() > 0)
+            {
+                BTreeNode<T>* n = tmp.front();    // 提取保存队头元素
+                if (n->left != NULL)
+                    tmp.add(n->left);
+
+                if (n->right != NULL)
+                    tmp.add(n->right);
+                tmp.remove();
+                queue.add(n);    // 对头元素出队后，进queue队保存
+            }
+        }
+    }
+
     BTreeNode<T>* clone(BTreeNode<T>* node) const
     {
         BTreeNode<T>* ret = NULL;
@@ -282,6 +303,53 @@ protected:
 
         return ret;
     }
+
+    void traversal(BTTraversal order, LinkQueue<BTreeNode<T>*>& queue)
+    {
+        switch (order)
+        {
+            case PreOrder:
+                preOrderTraversal(root(), queue);
+                break;
+            case InOrder:
+                inOrderTraversal(root(), queue);
+                break;
+            case PostOrder:
+                postOrderTraversal(root(), queue);
+                break;
+            case LevelOrder:
+                levelOrderTraversal(root(), queue);
+                break;
+            default:
+                THROW_EXCEPTION(InvalidOperationException, "");
+                break;
+        }
+    }
+
+	BTreeNode<T>* connect(LinkQueue<BTreeNode<T>*>& queue)
+	{
+		BTreeNode<T>* ret = NULL;
+		if (queue.length() > 0)
+		{
+			ret = queue.front();
+			// 初始化操作
+			BTreeNode<T>* slider = queue.front();
+			queue.remove();
+			slider->left = NULL;
+			//循环连接
+			while (queue.length() > 0)
+			{
+				slider->right = queue.front();
+				queue.front()-> left = slider;
+				slider = queue.front();
+				queue.remove();
+			}
+			slider->right = NULL;	// 最后一个双向链表结点置空
+		}
+
+
+		return ret;
+	}
 
 public:
     bool insert(TreeNode<T>* node)
@@ -466,25 +534,13 @@ public:
         }
     }
 
-    SharedPointer<Array<T>> tranversal(BTTraversal order)
+    // 先序、中序、后序和层次遍历
+    SharedPointer<Array<T>> traversal(BTTraversal order)
     {
         DynamicArray<T>*         ret = NULL;
-        LinkQueue<BTreeNode<T>*> queue;    // 保存遍历结点的次序
-        switch (order)
-        {
-            case PreOrder:
-                preOrderTraversal(root(), queue);
-                break;
-            case InOrder:
-                inOrderTraversal(root(), queue);
-                break;
-            case PostOrder:
-                postOrderTraversal(root(), queue);
-                break;
-            default:
-                THROW_EXCEPTION(InvalidOperationException, "");
-                break;
-        }
+        LinkQueue<BTreeNode<T>*> queue;
+
+        traversal(order, queue);
         ret = new DynamicArray<T>(queue.length());
         if (ret != NULL)
         {
@@ -547,6 +603,17 @@ public:
         }
         return ret;
     }
+
+	// 线索化实现
+	BTreeNode<T>* thread(BTTraversal order)
+	{
+		BTreeNode<T>* ret = NULL;
+		LinkQueue<BTreeNode<T>*> queue;
+		traversal(order, queue);
+		ret = connect(queue);
+		this->m_root = NULL;	// 置空树
+		return ret;
+	}
 
     ~BTree()
     {

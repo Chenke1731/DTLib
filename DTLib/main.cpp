@@ -52,17 +52,17 @@ int main()
 
     // SharedPointer<Tree<int>> sp = bt.remove(3);
 
-    cout << "Old tree " << endl;
-    for (int i = 0; i < 5; i++)
-    {
-        TreeNode<int>* node = bt.find(a[i]);
-        while (node)
-        {
-            cout << node->value << " ";
-            node = node->parent;
-        }
-        cout << endl;
-    }
+    //    cout << "Old tree " << endl;
+    //    for (int i = 0; i < 5; i++)
+    //    {
+    //        TreeNode<int>* node = bt.find(a[i]);
+    //        while (node)
+    //        {
+    //            cout << node->value << " ";
+    //            node = node->parent;
+    //        }
+    //        cout << endl;
+    //    }
     //    for (bt.begin(); !bt.end(); bt.next())
     //    {
     //        cout << bt.current() << endl;
@@ -79,11 +79,30 @@ int main()
 
     SharedPointer<BTree<int>> r = bt.add(nbt);
 
-    SharedPointer<Array<int>> sp1 = r->tranversal(PreOrder);
+    // SharedPointer<Array<int>> sp1 = r->traversal(LevelOrder);
+    SharedPointer<Array<int>> sp1 = bt.traversal(LevelOrder);
+    //    for (bt.begin(); !bt.end(); bt.next())
+    //    {
+    //        cout << bt.current() << endl;
+    //    }
     for (int i = 0; i < (*sp1).length(); i++)
     {
         cout << (*sp1)[i] << " ";
     }
+	cout << endl;
+
+	cout << "thread..." << endl;
+	BTreeNode<int>* head = bt.thread(LevelOrder);
+	while (head->right != NULL)
+	{
+		head = head->right;
+	}
+	while (head != NULL)
+	{
+		cout << head->value << " ";
+		head = head->left;
+	}
+	cout << endl;
 
     cout << endl;
     return 0;
